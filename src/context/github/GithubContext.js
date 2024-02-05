@@ -12,6 +12,10 @@ export const GithubProvider = ({ children }) => {
     users: [],
     loading: false,
   };
+
+  // Clear users from state
+  const clearUsers = () => dispach({ type: "CLEAR_USERS" });
+
   // SET LOADING
   const setLoading = () => dispach({ type: "SET_LOADING" });
 
@@ -28,7 +32,7 @@ export const GithubProvider = ({ children }) => {
       const response = await fetch(`${GITHUB_URL}/search/users?${params}`, {
         method: "GET",
         headers: {
-          Authorization: `Bearer  ${GITHUB_TOKEN}`,
+          Authorization: `token ${GITHUB_TOKEN}`,
         },
       });
 
@@ -52,6 +56,7 @@ export const GithubProvider = ({ children }) => {
         users: state.users,
         loading: state.loading,
         searchUsers,
+        clearUsers,
       }}
     >
       {children}
