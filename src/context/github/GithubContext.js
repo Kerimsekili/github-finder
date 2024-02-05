@@ -17,11 +17,15 @@ export const GithubProvider = ({ children }) => {
 
   const [state, dispach] = useReducer(githubReducer, initialState);
 
-  //Get initial users(testing purposes)
-  const fetchUsers = async () => {
+  //Get search results
+  const searchUsers = async (text) => {
     setLoading();
+
+    const params = new URLSearchParams({
+      q: text,
+    });
     try {
-      const response = await fetch(`${GITHUB_URL}/users`, {
+      const response = await fetch(`${GITHUB_URL}/search/users?${params}`, {
         method: "GET",
         headers: {
           Authorization: `Bearer  ${GITHUB_TOKEN}`,
@@ -32,10 +36,10 @@ export const GithubProvider = ({ children }) => {
         throw new Error(`HTTP error! Status: ${response.status}`);
       }
 
-      const data = await response.json();
+      const { items } = await response.json();
       dispach({
         type: "GET_USERS",
-        payload: data,
+        payload: items,
       });
     } catch (error) {
       console.error("Error fetching users:", error);
@@ -47,7 +51,7 @@ export const GithubProvider = ({ children }) => {
       value={{
         users: state.users,
         loading: state.loading,
-        fetchUsers,
+        searchUsers,
       }}
     >
       {children}
