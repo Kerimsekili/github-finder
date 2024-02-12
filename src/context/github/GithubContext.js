@@ -23,34 +23,6 @@ export const GithubProvider = ({ children }) => {
 
   const [state, dispach] = useReducer(githubReducer, initialState);
   console.log(state);
-  //Get search results
-  const searchUsers = async (text) => {
-    setLoading();
-
-    const params = new URLSearchParams({
-      q: text,
-    });
-    try {
-      const response = await fetch(`${GITHUB_URL}/search/users?${params}`, {
-        method: "GET",
-        headers: {
-          Authorization: `token ${GITHUB_TOKEN}`,
-        },
-      });
-
-      if (!response.ok) {
-        throw new Error(`HTTP error! Status: ${response.status}`);
-      }
-
-      const { items } = await response.json();
-      dispach({
-        type: "GET_USERS",
-        payload: items,
-      });
-    } catch (error) {
-      console.error("Error fetching users:", error);
-    }
-  };
 
   //Get single user
   const getUser = async (login) => {
@@ -114,11 +86,8 @@ export const GithubProvider = ({ children }) => {
   return (
     <GithubContext.Provider
       value={{
-        users: state.users,
-        loading: state.loading,
-        user: state.user,
-        repos: state.repos,
-        searchUsers,
+        ...state,
+        dispach,
         clearUsers,
         getUser,
         getUserRepos,
