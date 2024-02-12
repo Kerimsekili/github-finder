@@ -21,7 +21,7 @@ export const GithubProvider = ({ children }) => {
   const setLoading = () => dispach({ type: "SET_LOADING" });
 
   const [state, dispach] = useReducer(githubReducer, initialState);
-
+  console.log(state);
   //Get search results
   const searchUsers = async (text) => {
     setLoading();
@@ -62,7 +62,7 @@ export const GithubProvider = ({ children }) => {
           Authorization: `token ${GITHUB_TOKEN}`,
         },
       });
-
+      console.log(response);
       if (!response.status === 404) {
         window.location = "/notFound";
       } else {
