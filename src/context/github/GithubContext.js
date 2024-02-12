@@ -11,6 +11,7 @@ export const GithubProvider = ({ children }) => {
   const initialState = {
     users: [],
     user: {},
+    repos: [],
     loading: false,
   };
 
@@ -76,6 +77,39 @@ export const GithubProvider = ({ children }) => {
       console.error("Error fetching users:", error);
     }
   };
+  //Get user repos
+  const getUserRepos = async (login) => {
+    setLoading();
+
+    const params = new URLSearchParams({
+      sort: "created",
+      per_page: 10,
+    });
+
+    try {
+      const response = await fetch(
+        `${GITHUB_URL}/users/${login}/repos?${params}`,
+        {
+          method: "GET",
+          headers: {
+            Authorization: `token ${GITHUB_TOKEN}`,
+          },
+        }
+      );
+
+      if (!response.ok) {
+        throw new Error(`HTTP error! Status: ${response.status}`);
+      }
+
+      const data = await response.json();
+      dispach({
+        type: "GET_REPOS",
+        payload: data,
+      });
+    } catch (error) {
+      console.error("Error fetching repos:", error);
+    }
+  };
 
   return (
     <GithubContext.Provider
@@ -83,9 +117,11 @@ export const GithubProvider = ({ children }) => {
         users: state.users,
         loading: state.loading,
         user: state.user,
+        repos: state.repos,
         searchUsers,
         clearUsers,
         getUser,
+        getUserRepos,
       }}
     >
       {children}
